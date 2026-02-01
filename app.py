@@ -1532,56 +1532,83 @@ elif not is_rate_limited():
                     st.session_state.selected_coin = coin.get('id')
                     st.rerun()
 
-# Floating language badge in bottom left
-current_lang_name = LANGUAGE_OPTIONS.get(st.session_state.language, "English")
-st.markdown(f"""
+# Floating language selector in bottom left - using popover
+st.markdown("""
 <style>
-.lang-badge {{
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    background: linear-gradient(135deg, rgba(0, 255, 255, 0.2) 0%, rgba(255, 0, 255, 0.2) 100%);
-    border: 1px solid rgba(0, 255, 255, 0.5);
-    border-radius: 20px;
-    padding: 8px 16px;
-    color: #00ffff;
-    font-size: 14px;
-    font-weight: 600;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    z-index: 9999;
-    cursor: default;
-    transition: all 0.3s ease;
-}}
-.lang-badge:hover {{
-    border-color: #ff00ff;
-    box-shadow: 0 4px 20px rgba(255, 0, 255, 0.3);
-}}
-@media screen and (max-width: 768px) {{
-    .lang-badge {{
-        bottom: 70px;
-        left: 10px;
-        padding: 12px 18px;
-        font-size: 16px;
-        min-height: 48px;
-        min-width: 48px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        border-radius: 24px;
-    }}
-}}
-@media screen and (max-width: 480px) {{
-    .lang-badge {{
-        bottom: 70px;
-        left: 8px;
-        padding: 10px 14px;
-        font-size: 14px;
-    }}
-}}
+/* Style the floating language popover */
+div[data-testid="stPopover"] > div:first-child > button {
+    position: fixed !important;
+    bottom: 20px !important;
+    left: 20px !important;
+    z-index: 9999 !important;
+    background: linear-gradient(135deg, rgba(0, 255, 255, 0.2) 0%, rgba(255, 0, 255, 0.2) 100%) !important;
+    border: 1px solid rgba(0, 255, 255, 0.5) !important;
+    border-radius: 20px !important;
+    padding: 10px 18px !important;
+    color: #00ffff !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    backdrop-filter: blur(10px) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+    min-height: 44px !important;
+}
+div[data-testid="stPopover"] > div:first-child > button:hover {
+    border-color: #ff00ff !important;
+    box-shadow: 0 4px 20px rgba(255, 0, 255, 0.3) !important;
+}
+/* Popover content styling */
+div[data-testid="stPopoverBody"] {
+    background: linear-gradient(135deg, rgba(10, 10, 20, 0.98) 0%, rgba(26, 10, 46, 0.98) 100%) !important;
+    border: 1px solid rgba(0, 255, 255, 0.5) !important;
+    border-radius: 16px !important;
+    backdrop-filter: blur(10px) !important;
+}
+div[data-testid="stPopoverBody"] button {
+    background: rgba(20, 20, 40, 0.8) !important;
+    border: 1px solid rgba(0, 255, 255, 0.3) !important;
+    border-radius: 10px !important;
+    color: #e0e0e0 !important;
+    padding: 12px 20px !important;
+    margin: 4px 0 !important;
+    width: 100% !important;
+    min-height: 48px !important;
+    font-size: 16px !important;
+    transition: all 0.2s ease !important;
+}
+div[data-testid="stPopoverBody"] button:hover {
+    background: rgba(0, 255, 255, 0.2) !important;
+    border-color: #00ffff !important;
+    color: #00ffff !important;
+}
+@media screen and (max-width: 768px) {
+    div[data-testid="stPopover"] > div:first-child > button {
+        bottom: 70px !important;
+        left: 10px !important;
+        padding: 12px 20px !important;
+        font-size: 16px !important;
+        min-height: 50px !important;
+    }
+    div[data-testid="stPopoverBody"] button {
+        padding: 14px 20px !important;
+        min-height: 52px !important;
+        font-size: 18px !important;
+    }
+}
 </style>
-<div class="lang-badge" title="Change language in sidebar">
-    🌐 {current_lang_name}
-</div>
 """, unsafe_allow_html=True)
+
+# Language popover with clickable options
+current_lang_name = LANGUAGE_OPTIONS.get(st.session_state.language, "English")
+with st.popover(f"🌐 {current_lang_name}"):
+    st.markdown("**Select Language**")
+    for lang_code, lang_name in LANGUAGE_OPTIONS.items():
+        if st.button(
+            f"{'✓ ' if lang_code == st.session_state.language else ''}{lang_name}",
+            key=f"lang_btn_{lang_code}",
+            use_container_width=True
+        ):
+            if lang_code != st.session_state.language:
+                st.session_state.language = lang_code
+                st.session_state.settings["language"] = lang_code
+                save_settings(st.session_state.settings)
+                st.rerun()
