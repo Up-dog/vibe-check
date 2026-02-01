@@ -1116,6 +1116,25 @@ else:
 
 st.sidebar.divider()
 
+# Language selector at bottom of sidebar
+st.sidebar.markdown("#### 🌐 Language")
+current_lang_index = list(LANGUAGE_OPTIONS.keys()).index(st.session_state.language)
+new_lang = st.sidebar.selectbox(
+    "Language",
+    options=list(LANGUAGE_OPTIONS.keys()),
+    format_func=lambda x: LANGUAGE_OPTIONS[x],
+    index=current_lang_index,
+    key="language_selector",
+    label_visibility="collapsed"
+)
+if new_lang != st.session_state.language:
+    st.session_state.language = new_lang
+    st.session_state.settings["language"] = new_lang
+    save_settings(st.session_state.settings)
+    st.rerun()
+
+st.sidebar.divider()
+
 # === MAIN ===
 PERSONALITIES = {
     "en": [
@@ -1494,3 +1513,42 @@ elif not is_rate_limited():
                 ):
                     st.session_state.selected_coin = coin.get('id')
                     st.rerun()
+
+# Floating language badge in bottom left
+current_lang_name = LANGUAGE_OPTIONS.get(st.session_state.language, "English")
+st.markdown(f"""
+<style>
+.lang-badge {{
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: linear-gradient(135deg, rgba(0, 255, 255, 0.2) 0%, rgba(255, 0, 255, 0.2) 100%);
+    border: 1px solid rgba(0, 255, 255, 0.5);
+    border-radius: 20px;
+    padding: 8px 16px;
+    color: #00ffff;
+    font-size: 14px;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    cursor: default;
+    transition: all 0.3s ease;
+}}
+.lang-badge:hover {{
+    border-color: #ff00ff;
+    box-shadow: 0 4px 20px rgba(255, 0, 255, 0.3);
+}}
+@media screen and (max-width: 768px) {{
+    .lang-badge {{
+        bottom: 10px;
+        left: 10px;
+        padding: 6px 12px;
+        font-size: 12px;
+    }}
+}}
+</style>
+<div class="lang-badge" title="Change language in sidebar">
+    🌐 {current_lang_name}
+</div>
+""", unsafe_allow_html=True)
