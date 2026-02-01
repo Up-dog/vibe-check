@@ -870,6 +870,17 @@ a:hover {
     div[data-testid="stSlider"] {
         padding: 10px 0 !important;
     }
+
+    /* Sidebar language selector - larger on mobile */
+    section[data-testid="stSidebar"] div[data-testid="stSelectbox"] > div > div {
+        min-height: 50px !important;
+        font-size: 18px !important;
+    }
+
+    section[data-testid="stSidebar"] div[data-testid="stSelectbox"] svg {
+        width: 24px !important;
+        height: 24px !important;
+    }
 }
 
 /* Extra small devices */
@@ -885,6 +896,13 @@ a:hover {
 
     div[data-testid="stMetric"] div[data-testid="stMetricValue"] {
         font-size: 20px !important;
+    }
+
+    /* Even larger touch targets on small phones */
+    section[data-testid="stSidebar"] div[data-testid="stSelectbox"] > div > div {
+        min-height: 54px !important;
+        font-size: 18px !important;
+        padding: 12px !important;
     }
 }
 </style>
@@ -1541,10 +1559,25 @@ st.markdown(f"""
 }}
 @media screen and (max-width: 768px) {{
     .lang-badge {{
-        bottom: 10px;
+        bottom: 70px;
         left: 10px;
-        padding: 6px 12px;
-        font-size: 12px;
+        padding: 12px 18px;
+        font-size: 16px;
+        min-height: 48px;
+        min-width: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border-radius: 24px;
+    }}
+}}
+@media screen and (max-width: 480px) {{
+    .lang-badge {{
+        bottom: 70px;
+        left: 8px;
+        padding: 10px 14px;
+        font-size: 14px;
     }}
 }}
 </style>
