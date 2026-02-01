@@ -459,8 +459,13 @@ def get_vibe_check(coin_name, price, change_24h, personality, _api_key, language
         lang_names = {"es": "Spanish", "fr": "French", "de": "German", "ja": "Japanese", "zh": "Chinese"}
         lang_instruction = f"\n\nIMPORTANT: Write your response in {lang_names.get(language, 'English')}."
 
-    # Handle default personality differently
-    if personality == "Default (Just the facts)":
+    # Handle default personality differently (check all language versions)
+    default_personalities = [
+        "Default (Just the facts)", "Por defecto (Solo los hechos)",
+        "Par défaut (Juste les faits)", "Standard (Nur die Fakten)",
+        "デフォルト（事実のみ）", "默认（仅事实）"
+    ]
+    if personality in default_personalities:
         style_instruction = "Give a straightforward, factual 2-sentence summary of the market sentiment."
     else:
         style_instruction = f"Give a 2-sentence summary of the vibe in the style of {personality}."
@@ -1004,24 +1009,79 @@ else:
 st.sidebar.divider()
 
 # === MAIN ===
-preset_personalities = [
-    "Default (Just the facts)",
-    "A Surfer Dude", "A Grumpy Old Man", "A Wall Street Banker", "A Gen Z Influencer",
-    "A Pirate Captain", "Donald Trump", "Donald Duck", "Yoda from Star Wars",
-    "Shakespeare", "A Dramatic Soap Opera Narrator", "Gordon Ramsay",
-    "A Conspiracy Theorist", "Bob Ross", "Kratos from God of War", "Atreus from God of War",
-    "✏️ Custom..."
-]
+PERSONALITIES = {
+    "en": [
+        "Default (Just the facts)",
+        "A Surfer Dude", "A Grumpy Old Man", "A Wall Street Banker", "A Gen Z Influencer",
+        "A Pirate Captain", "Donald Trump", "Donald Duck", "Yoda from Star Wars",
+        "Shakespeare", "A Dramatic Soap Opera Narrator", "Gordon Ramsay",
+        "A Conspiracy Theorist", "Bob Ross", "Kratos from God of War", "Atreus from God of War",
+        "✏️ Custom..."
+    ],
+    "es": [
+        "Por defecto (Solo los hechos)",
+        "Un Surfista", "Un Viejo Gruñón", "Un Banquero de Wall Street", "Un Influencer Gen Z",
+        "Un Capitán Pirata", "Donald Trump", "El Pato Donald", "Yoda de Star Wars",
+        "Shakespeare", "Un Narrador de Telenovela", "Gordon Ramsay",
+        "Un Conspiracionista", "Bob Ross", "Kratos de God of War", "Atreus de God of War",
+        "✏️ Personalizado..."
+    ],
+    "fr": [
+        "Par défaut (Juste les faits)",
+        "Un Surfeur", "Un Vieil Homme Grincheux", "Un Banquier de Wall Street", "Un Influenceur Gen Z",
+        "Un Capitaine Pirate", "Donald Trump", "Donald Duck", "Yoda de Star Wars",
+        "Shakespeare", "Un Narrateur de Soap Opera", "Gordon Ramsay",
+        "Un Théoricien du Complot", "Bob Ross", "Kratos de God of War", "Atreus de God of War",
+        "✏️ Personnalisé..."
+    ],
+    "de": [
+        "Standard (Nur die Fakten)",
+        "Ein Surfer", "Ein Mürrischer Alter Mann", "Ein Wall Street Banker", "Ein Gen Z Influencer",
+        "Ein Piratenkapitän", "Donald Trump", "Donald Duck", "Yoda aus Star Wars",
+        "Shakespeare", "Ein Dramatischer Seifenoper-Erzähler", "Gordon Ramsay",
+        "Ein Verschwörungstheoretiker", "Bob Ross", "Kratos aus God of War", "Atreus aus God of War",
+        "✏️ Benutzerdefiniert..."
+    ],
+    "ja": [
+        "デフォルト（事実のみ）",
+        "サーファー", "不機嫌な老人", "ウォール街の銀行家", "Z世代インフルエンサー",
+        "海賊船長", "ドナルド・トランプ", "ドナルドダック", "スターウォーズのヨーダ",
+        "シェイクスピア", "ドラマチックなナレーター", "ゴードン・ラムゼイ",
+        "陰謀論者", "ボブ・ロス", "ゴッド・オブ・ウォーのクレイトス", "ゴッド・オブ・ウォーのアトレウス",
+        "✏️ カスタム..."
+    ],
+    "zh": [
+        "默认（仅事实）",
+        "冲浪者", "脾气暴躁的老头", "华尔街银行家", "Z世代网红",
+        "海盗船长", "唐纳德·特朗普", "唐老鸭", "星球大战的尤达",
+        "莎士比亚", "戏剧性的肥皂剧旁白", "戈登·拉姆齐",
+        "阴谋论者", "鲍勃·罗斯", "战神的奎托斯", "战神的阿特柔斯",
+        "✏️ 自定义..."
+    ]
+}
+
+CUSTOM_INPUT_LABELS = {
+    "en": "Enter your custom personality:",
+    "es": "Ingresa tu personalidad personalizada:",
+    "fr": "Entrez votre personnalité personnalisée:",
+    "de": "Geben Sie Ihre eigene Persönlichkeit ein:",
+    "ja": "カスタムパーソナリティを入力:",
+    "zh": "输入您的自定义个性:"
+}
+
+lang = st.session_state.language
+preset_personalities = PERSONALITIES.get(lang, PERSONALITIES["en"])
+custom_option = preset_personalities[-1]  # Last item is always custom
 
 selected_personality = st.selectbox(t("personality_label"), preset_personalities)
 
-if selected_personality == "✏️ Custom...":
+if selected_personality == custom_option:
     personality = st.text_input(
-        "Enter your custom personality:",
+        CUSTOM_INPUT_LABELS.get(lang, CUSTOM_INPUT_LABELS["en"]),
         placeholder=t("personality_placeholder")
     )
     if not personality:
-        personality = "Default (Just the facts)"
+        personality = preset_personalities[0]  # Default option
 else:
     personality = selected_personality
 
