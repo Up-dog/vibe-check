@@ -1,5 +1,6 @@
 .streamlit/secrets.toml
 watchlist.json
+settings.json
 .claude/
 nul
 __pycache__/
