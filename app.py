@@ -512,8 +512,14 @@ def get_rating_emoji(rating):
 st.set_page_config(
     page_title="Crypto Vibe Check",
     page_icon="🪙",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="collapsed",
+    layout="wide"
 )
+
+# Mobile viewport meta tag
+st.markdown("""
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+""", unsafe_allow_html=True)
 
 # Check if language is set - show language selector first
 if st.session_state.language is None:
@@ -778,6 +784,108 @@ a:hover {
 .stLineChart {
     background: rgba(10, 10, 20, 0.5) !important;
     border-radius: 12px !important;
+}
+
+/* ===== MOBILE RESPONSIVE STYLES ===== */
+@media screen and (max-width: 768px) {
+    /* Larger touch targets */
+    .stButton > button {
+        padding: 14px 24px !important;
+        font-size: 16px !important;
+        min-height: 48px !important;
+        width: 100% !important;
+    }
+
+    /* Stack columns vertically */
+    div[data-testid="column"] {
+        width: 100% !important;
+        flex: 1 1 100% !important;
+    }
+
+    /* Larger input fields */
+    div[data-testid="stTextInput"] input {
+        padding: 16px !important;
+        font-size: 18px !important;
+        min-height: 50px !important;
+    }
+
+    /* Larger selectbox */
+    div[data-testid="stSelectbox"] > div > div {
+        min-height: 50px !important;
+        font-size: 16px !important;
+    }
+
+    /* Metric cards - full width */
+    div[data-testid="stMetric"] {
+        padding: 16px !important;
+        margin-bottom: 10px !important;
+    }
+
+    div[data-testid="stMetric"] div[data-testid="stMetricValue"] {
+        font-size: 24px !important;
+    }
+
+    /* Title smaller on mobile */
+    h1 {
+        font-size: 1.8rem !important;
+        padding: 5px 0 !important;
+    }
+
+    h2, h3 {
+        font-size: 1.3rem !important;
+    }
+
+    h4 {
+        font-size: 1.1rem !important;
+    }
+
+    /* Sidebar adjustments */
+    section[data-testid="stSidebar"] {
+        min-width: 280px !important;
+    }
+
+    section[data-testid="stSidebar"] .stButton > button {
+        padding: 10px 14px !important;
+        font-size: 14px !important;
+        min-height: 44px !important;
+    }
+
+    /* Chart container */
+    .js-plotly-plot {
+        width: 100% !important;
+    }
+
+    /* Hide floating coins on mobile for performance */
+    .floating-coins {
+        display: none !important;
+    }
+
+    /* Alert dismiss button larger */
+    button[kind="secondary"] {
+        min-width: 44px !important;
+        min-height: 44px !important;
+    }
+
+    /* Slider larger touch area */
+    div[data-testid="stSlider"] {
+        padding: 10px 0 !important;
+    }
+}
+
+/* Extra small devices */
+@media screen and (max-width: 480px) {
+    h1 {
+        font-size: 1.5rem !important;
+    }
+
+    .stButton > button {
+        padding: 12px 16px !important;
+        font-size: 14px !important;
+    }
+
+    div[data-testid="stMetric"] div[data-testid="stMetricValue"] {
+        font-size: 20px !important;
+    }
 }
 </style>
 """, unsafe_allow_html=True)
